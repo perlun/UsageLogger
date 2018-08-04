@@ -1,6 +1,12 @@
-﻿using System;
+﻿using Dapper;
+using MySql.Data.MySqlClient;
+using SimpleMigrations;
+using SimpleMigrations.DatabaseProvider;
+using System;
+using System.Configuration;
 using System.Diagnostics;
-using System.IO;
+using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Timers;
@@ -29,6 +35,44 @@ namespace UsageLoggerService
             Interval = TIMER_INTERVAL
         };
 
+        private string ConnectionString
+        {
+            get => ConfigurationManager.ConnectionStrings["main"].ConnectionString;
+        }
+
+        private string InsertQuery
+        {
+            get => @"
+                INSERT INTO log_entry (
+                    host_name,
+                    login_name,
+                    process_name,
+                    file_name,
+                    duration
+                )
+                VALUES (
+                    @HostName,
+                    @LoginName,
+                    @ProcessName,
+                    @FileName,
+                    @Duration
+                )
+            ";
+        }
+
+        /// <summary>
+        /// Returns the host and login name, on this form: MYMACHINE\toor
+        /// </summary>
+        private string HostAndLoginName
+        {
+            get
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+                ManagementObjectCollection collection = searcher.Get();
+                return (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+            }
+        }
+
         public Service()
         {
             this.ServiceName = "UsageLoggerService";
@@ -41,11 +85,15 @@ namespace UsageLoggerService
 
         public void Run()
         {
+            RunMigrations();
+
             timer.Elapsed += (sender, e) =>
             {
                 if (IdleTimeFinder.GetIdleTime() > IDLE_TIMEOUT)
                 {
+#if DEBUG
                     Console.WriteLine("User idle, not logging");
+#endif
                     return;
                 }
 
@@ -56,6 +104,8 @@ namespace UsageLoggerService
                 // Process.GetProcessById expects a _signed_ integer?
                 var process = Process.GetProcessById((int)processId);
 
+                // The semantics here was derived purely from trial-and-error - I ran the program, leaving the machine in various
+                // states which helped me deduce these "do not log" scenarios.
                 if (process.Id == 0)
                 {
                     // "Idle" process
@@ -64,16 +114,46 @@ namespace UsageLoggerService
                 {
                     if (process.ProcessName == "LockApp")
                     {
-                        // Likely Ctrl - Alt - Del lock screen.
+                        // The Ctrl - Alt - Del lock screen.
                     }
                     else
                     {
-                        // TODO: Log to database instead of just writing to the console.
+#if DEBUG
                         Console.WriteLine($"{process.ProcessName} {process.MainModule.FileName}");
+#endif
+
+                        var list = HostAndLoginName.Split(new[] { '\\' });
+                        var hostName = list[0];
+                        var loginName = list[1];
+
+                        using (var connection = new MySqlConnection(ConnectionString))
+                        {
+                            connection.Execute(InsertQuery, new
+                            {
+                                hostName,
+                                loginName,
+                                process.ProcessName,
+                                process.MainModule.FileName,
+                                Duration = TIMER_INTERVAL / 1000
+                            });
+                        }
                     }
                 }
             };
             timer.Enabled = true;
+        }
+
+        private void RunMigrations()
+        {
+            using (var connection = new MySqlConnection(ConnectionString))
+            {
+                var databaseProvider = new MysqlDatabaseProvider(connection);
+                var migrationsAssembly = GetType().Assembly;
+                var migrator = new SimpleMigrator(migrationsAssembly, databaseProvider);
+
+                migrator.Load();
+                migrator.MigrateToLatest();
+            }
         }
 
         protected override void OnStop()

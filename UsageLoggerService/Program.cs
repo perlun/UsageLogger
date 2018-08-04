@@ -25,39 +25,58 @@ namespace UsageLoggerService
             }
             else if (Environment.UserInteractive)
             {
-                if (args.Length != 1)
-                {
-                    DisplayUsage();
-                    return -1;
-                }
-
-                var firstArg = args[0];
-
-                switch (firstArg)
-                {
-                    case "/i":
-                    case "/install":
-                        return InstallService();
-
-                    case "/u":
-                    case "/uninstall":
-                        return UninstallService();
-
-                    default:
-                        Console.WriteLine("Argument not recognized: {0}", args[0]);
-                        Console.WriteLine(string.Empty);
-                        DisplayUsage();
-                        return 1;
-                }
+                return ParseArgumentsAndRun(args);
             }
             else
             {
-
                 var servicesToRun = new ServiceBase[] { new Service() };
                 ServiceBase.Run(servicesToRun);
             }
 
             return 0;
+        }
+
+        private static int ParseArgumentsAndRun(string[] args)
+        {
+            int returnValue;
+
+            if (args.Length != 1)
+            {
+                DisplayUsage();
+                returnValue = -1;
+
+                // I am completely aware that most programmers dislike goto. For cases like this, I think it makes
+                // perfect sense to I will choose to ignore them for now.
+                goto waitForKeypress;
+            }
+
+            var firstArg = args[0];
+
+            switch (firstArg)
+            {
+                case "/i":
+                case "/install":
+                    returnValue = InstallService();
+                    break;
+
+                case "/u":
+                case "/uninstall":
+                    returnValue = UninstallService();
+                    break;
+
+                default:
+                    Console.WriteLine("Argument not recognized: {0}", args[0]);
+                    Console.WriteLine(string.Empty);
+                    DisplayUsage();
+                    returnValue = 1;
+                    break;
+            }
+
+        waitForKeypress:
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
+            return returnValue;
+
         }
 
         private static int InstallService()
