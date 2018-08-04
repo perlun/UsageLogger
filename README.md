@@ -30,6 +30,11 @@ CREATE USER 'usage_log'@'%' IDENTIFIED BY 'the_password';
 GRANT ALL PRIVILEGES ON usage_log.* TO 'usage_log'@'%';
 ```
 
+## Development
+
+- The program runs as a Windows app without a user interface. All `Console.WriteLine` statements get
+  redirected to the Output window in Visual Studio, if running with debugger attached.
+
 # LICENSE
 
 MIT

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace UsageLoggerService
+namespace UsageLogger
 {
     // Inspired by https://stackoverflow.com/a/11901730/227779
 

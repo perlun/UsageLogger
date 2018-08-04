@@ -1,4 +1,4 @@
-﻿namespace UsageLoggerService
+﻿namespace UsageLogger
 {
     internal struct LASTINPUTINFO
     {

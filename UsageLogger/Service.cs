@@ -8,12 +8,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.ServiceProcess;
 using System.Timers;
 
-namespace UsageLoggerService
+namespace UsageLogger
 {
-    public class Service : ServiceBase
+    public class BackgroundWorker
     {
 #if DEBUG
         const int TIMER_INTERVAL = 3_000;
@@ -71,16 +70,6 @@ namespace UsageLoggerService
                 ManagementObjectCollection collection = searcher.Get();
                 return (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
             }
-        }
-
-        public Service()
-        {
-            this.ServiceName = "UsageLoggerService";
-        }
-
-        protected override void OnStart(string[] args)
-        {
-            Run();
         }
 
         public void Run()
@@ -154,10 +143,6 @@ namespace UsageLoggerService
                 migrator.Load();
                 migrator.MigrateToLatest();
             }
-        }
-
-        protected override void OnStop()
-        {
         }
     }
 }
