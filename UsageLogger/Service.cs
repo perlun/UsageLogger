@@ -78,11 +78,10 @@ namespace UsageLogger
 
             timer.Elapsed += (sender, e) =>
             {
-                if (IdleTimeFinder.GetIdleTime() > IDLE_TIMEOUT)
+                var idleTime = IdleTimeFinder.GetIdleTime();
+                if (idleTime > IDLE_TIMEOUT)
                 {
-#if DEBUG
-                    Console.WriteLine("User idle, not logging");
-#endif
+                    Console.WriteLine($"User idle {idleTime} milliseconds, not logging");
                     return;
                 }
 
@@ -107,9 +106,7 @@ namespace UsageLogger
                     }
                     else
                     {
-#if DEBUG
                         Console.WriteLine($"{process.ProcessName} {process.MainModule.FileName}");
-#endif
 
                         var list = HostAndLoginName.Split(new[] { '\\' });
                         var hostName = list[0];
@@ -130,6 +127,8 @@ namespace UsageLogger
                 }
             };
             timer.Enabled = true;
+
+            Console.WriteLine("Program initialized, waiting on timer");
         }
 
         private void RunMigrations()
