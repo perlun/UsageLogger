@@ -15,7 +15,8 @@ namespace UsageLoggerService.Migrations
                     login_name TINYTEXT NOT NULL,
                     process_name TINYTEXT NOT NULL,
                     file_name TINYTEXT NOT NULL,
-                    duration SMALLINT NOT NULL
+                    duration SMALLINT NOT NULL,
+                    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                 )
             ");
         }
