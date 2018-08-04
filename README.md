@@ -30,6 +30,25 @@ CREATE USER 'usage_log'@'%' IDENTIFIED BY 'the_password';
 GRANT ALL PRIVILEGES ON usage_log.* TO 'usage_log'@'%';
 ```
 
+## How to install the program
+
+- After building the project (I've used VS2017 Community), copy `bin/x64/Release/UsageLogger.exe*` to
+  a folder of your choice.
+- Modify `UsageLogger.exe.config` to refer to your MySQL server.
+- Add a shortcut to the `UsageLogger.exe` file to `shell:common startup`. The program should now start
+  when any user logs on to Windows. (To be able to add a shortcut there, you might have to open up
+  the security permissions for the folder in question and grant your own user Full Control.)
+
+## Security model
+
+Obviously, to make this much more secure, it should run as a Windows Service with `SYSTEM` privileges,
+and all the children accounts should be non-privileged. However, certain Win32 APIs being used by this
+program are unavailable when being run from a background service.
+
+This means that any skillful user could easily open up the Task Manager and kill the `UsageLogger.exe`
+process. But, if they've managed to be clever enough to figure that out, maybe your users deserve their
+hard-earned privacy after all? :-)
+
 ## Development
 
 - The program runs as a Windows app without a user interface. All `Console.WriteLine` statements get
