@@ -54,6 +54,26 @@ hard-earned privacy after all? :-)
 - The program runs as a Windows app without a user interface. All `Console.WriteLine` statements get
   redirected to the Output window in Visual Studio, if running with debugger attached.
 
+## Useful SQL queries
+
+```sql
+-- Usage per user, per day.
+SELECT
+	SUM(duration) / 60 AS minutes_used,
+	DATE(created) log_date,
+	login_name
+FROM log_entry
+GROUP BY log_date, login_name;
+
+-- Find the most used programs, sorted by total usage.
+SELECT
+	SUM(duration) / 3600 AS hours_used,
+	process_name
+FROM log_entry
+GROUP BY process_name
+ORDER BY hours_used DESC;
+```
+
 # LICENSE
 
-MIT
+[MIT](LICENSE)
