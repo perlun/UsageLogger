@@ -60,10 +60,20 @@ hard-earned privacy after all? :-)
 -- Usage per user, per day.
 SELECT
 	SUM(duration) / 60 AS minutes_used,
-	DATE(created) log_date,
+	DATE(created) AS log_date,
 	login_name
 FROM log_entry
 GROUP BY log_date, login_name;
+
+-- Like above but also display stats per process, for the last 7 days.
+SELECT
+        SUM(duration) / 60 AS minutes_used,
+        DATE(created) AS log_date,
+	login_name,
+	process_name
+FROM log_entry
+WHERE DATE(created) > NOW() - INTERVAL 7 DAY
+GROUP BY log_date, login_name, process_name;
 
 -- Find the most used programs, sorted by total usage.
 SELECT
