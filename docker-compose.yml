@@ -1,0 +1,18 @@
+version: '3.3'
+
+services:
+  webapp:
+    image: perlun/usagelogger-web-api
+
+    # Remove the 127.0.0.1 part if you want to expose the service on the
+    # network (note: will use unencrypted HTTP, prefer putting this
+    # behind a TLS-terminating nginx for better security)
+    ports:
+      - 127.0.0.1:8081:80
+
+    # Note: the actual value of the connection string is provided in the
+    # .env file (KEY=value format)
+    environment:
+      - USAGE_LOGGER_CONNECTION_STRING
+
+    restart: always

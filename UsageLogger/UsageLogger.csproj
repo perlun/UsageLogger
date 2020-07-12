@@ -69,7 +69,7 @@
     <Compile Include="IdleTimeFinder.cs" />
     <Compile Include="LASTINPUTINFO.cs" />
     <Compile Include="Migrations\CreateLogEntryTable.cs" />
-    <Compile Include="Service.cs" />
+    <Compile Include="BackgroundWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
