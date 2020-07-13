@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsageLogger", "UsageLogger\UsageLogger.csproj", "{46D39618-D56F-463E-BE1F-7A3A5758560E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsageLogger.Web", "UsageLogger.Web\UsageLogger.Web.csproj", "{3687836B-2F2B-4018-A0BF-E4C22BD5C9BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{46D39618-D56F-463E-BE1F-7A3A5758560E}.Debug|x64.Build.0 = Debug|x64
 		{46D39618-D56F-463E-BE1F-7A3A5758560E}.Release|x64.ActiveCfg = Release|x64
 		{46D39618-D56F-463E-BE1F-7A3A5758560E}.Release|x64.Build.0 = Release|x64
+		{3687836B-2F2B-4018-A0BF-E4C22BD5C9BF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3687836B-2F2B-4018-A0BF-E4C22BD5C9BF}.Debug|x64.Build.0 = Debug|Any CPU
+		{3687836B-2F2B-4018-A0BF-E4C22BD5C9BF}.Release|x64.ActiveCfg = Release|Any CPU
+		{3687836B-2F2B-4018-A0BF-E4C22BD5C9BF}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
